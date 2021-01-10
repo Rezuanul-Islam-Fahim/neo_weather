@@ -13,7 +13,7 @@ class HeadSection extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.search),
-              iconSize: 30,
+              iconSize: 35,
               color: Colors.white,
               onPressed: () {},
             ),
@@ -21,20 +21,20 @@ class HeadSection extends StatelessWidget {
               icon: SvgPicture.asset(
                 'assets/icons/menu.svg',
                 color: Colors.white,
-                width: 30,
+                width: 32,
               ),
               onPressed: () {},
             ),
           ],
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 'Dhaka',
-                style: TextStyle(color: Colors.white, fontSize: 34),
+                style: TextStyle(color: Colors.white, fontSize: 38),
               ),
               SizedBox(height: 5),
               Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './components/headSection.dart';
+import './components/weatherDetails.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,13 +35,13 @@ class _AppBodyState extends State<AppBody> {
         Container(
           width: double.infinity,
           height: double.infinity,
-          padding: EdgeInsets.fromLTRB(10, 35, 10, 20),
+          padding: EdgeInsets.fromLTRB(15, 45, 15, 40),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: <Color>[
-                Colors.white24.withOpacity(0.22),
+                Colors.white24.withOpacity(0.25),
                 Colors.white12,
                 Colors.white12,
                 Colors.white10,
@@ -52,6 +53,11 @@ class _AppBodyState extends State<AppBody> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               HeadSection(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                child: WeatherDetails(),
+              ),
             ],
           ),
         ),
