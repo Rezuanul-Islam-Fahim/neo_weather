@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../screens/searchPage.dart';
+
 class HeadSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,11 @@ class HeadSection extends StatelessWidget {
               icon: Icon(Icons.search),
               iconSize: 35,
               color: Colors.white,
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SearchPage(),
+                ),
+              ),
             ),
             IconButton(
               icon: SvgPicture.asset(
