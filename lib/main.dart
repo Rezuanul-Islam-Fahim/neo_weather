@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import './screens/homeScreen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(NeoWeather());
 
-class MyApp extends StatelessWidget {
+class NeoWeather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

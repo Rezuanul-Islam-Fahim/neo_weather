@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'weatherInDepth.dart';
+import 'weatherData.dart';
 
 class WeatherDetails extends StatelessWidget {
   @override
@@ -31,7 +31,32 @@ class WeatherDetails extends StatelessWidget {
         SizedBox(height: 20),
         Divider(color: Colors.white30),
         SizedBox(height: 20),
-        WeatherInDepth(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            WeatherData(
+              title: 'Wind',
+              value: 10,
+              sign: 'km/h',
+              barColor: Colors.redAccent,
+              barWidthFactor: 0.7,
+            ),
+            WeatherData(
+              title: 'Rain',
+              value: 3,
+              sign: '%',
+              barColor: Colors.blueAccent,
+              barWidthFactor: 0.3,
+            ),
+            WeatherData(
+              title: 'Humidity',
+              value: 8,
+              sign: '%',
+              barColor: Colors.greenAccent,
+              barWidthFactor: 0.5,
+            ),
+          ],
+        ),
       ],
     );
   }

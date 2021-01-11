@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../screens/searchPage.dart';
+import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
   @override
