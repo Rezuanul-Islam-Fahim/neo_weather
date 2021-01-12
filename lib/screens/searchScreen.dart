@@ -25,12 +25,12 @@ class SearchPage extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: <Color>[
-                  Colors.black54,
+                  Colors.black87.withOpacity(0.75),
                   Colors.black54,
                   Colors.black45,
                   Colors.black12,
                 ],
-                stops: [0.1, 0.3, 0.7, 1],
+                stops: [0.2, 0.5, 0.7, 1],
               ),
             ),
           ),
@@ -45,7 +45,7 @@ class SearchPage extends StatelessWidget {
               SizedBox(height: 5),
               Text(
                 'Add City to See Weather Details',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.white, fontSize: 19),
               ),
               SizedBox(height: 25),
               SearchBox(),
@@ -54,8 +54,8 @@ class SearchPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 45, left: 15),
             child: IconButton(
-              icon: Icon(Icons.arrow_back_ios_rounded),
-              iconSize: 30,
+              icon: Icon(Icons.arrow_back_rounded),
+              iconSize: 32,
               color: Colors.white,
               onPressed: () => Navigator.of(context).pop(),
             ),
