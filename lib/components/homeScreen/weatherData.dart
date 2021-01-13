@@ -12,7 +12,7 @@ class WeatherData extends StatelessWidget {
   });
 
   final String title;
-  final int value;
+  final dynamic value;
   final String sign;
   final Color barColor;
   final double barWidthFactor;
@@ -25,10 +25,15 @@ class WeatherData extends StatelessWidget {
           title,
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
-        Text(
-          value.toString(),
-          style: TextStyle(color: Colors.white, fontSize: 25),
-        ),
+        value != null
+            ? Text(
+                value.toStringAsFixed(0),
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              )
+            : Text(
+                '- -',
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
         Text(
           sign,
           style: TextStyle(color: Colors.white, fontSize: 15),

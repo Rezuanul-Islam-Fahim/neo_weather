@@ -4,6 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
+  HeadSection(this.weatherData);
+
+  final Map<String, dynamic> weatherData;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,10 +41,15 @@ class HeadSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'Dhaka',
-                style: TextStyle(color: Colors.white, fontSize: 38),
-              ),
+              weatherData['city'] != null
+                  ? Text(
+                      weatherData['city'],
+                      style: TextStyle(color: Colors.white, fontSize: 38),
+                    )
+                  : Text(
+                      '- -',
+                      style: TextStyle(color: Colors.white, fontSize: 38),
+                    ),
               SizedBox(height: 5),
               Text(
                 '07:50 PM - Monday, 9 Nov 2020',

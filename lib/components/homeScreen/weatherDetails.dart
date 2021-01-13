@@ -4,15 +4,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'weatherData.dart';
 
 class WeatherDetails extends StatelessWidget {
+  WeatherDetails(this.weatherData);
+
+  final Map<String, dynamic> weatherData;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '25°C',
-          style: TextStyle(color: Colors.white, fontSize: 65),
-        ),
+        weatherData['temp'] != null
+            ? Text(
+                '${weatherData['temp'].toStringAsFixed(0)}°C',
+                style: TextStyle(color: Colors.white, fontSize: 65),
+              )
+            : Text(
+                '- -',
+                style: TextStyle(color: Colors.white, fontSize: 65),
+              ),
         SizedBox(height: 5),
         Row(
           children: <Widget>[
@@ -36,21 +45,21 @@ class WeatherDetails extends StatelessWidget {
           children: <Widget>[
             WeatherData(
               title: 'Wind',
-              value: 10,
+              value: weatherData['wind'],
               sign: 'km/h',
               barColor: Colors.redAccent,
               barWidthFactor: 0.7,
             ),
             WeatherData(
-              title: 'Rain',
-              value: 3,
+              title: 'Humidity',
+              value: weatherData['humidity'],
               sign: '%',
               barColor: Colors.blueAccent,
               barWidthFactor: 0.3,
             ),
             WeatherData(
-              title: 'Humidity',
-              value: 8,
+              title: 'Visibility',
+              value: weatherData['visibility'],
               sign: '%',
               barColor: Colors.greenAccent,
               barWidthFactor: 0.5,
