@@ -18,20 +18,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchWeatherData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() => weatherData['woeid'] = prefs.getInt('woeid'));
+    String city = prefs.getString('city');
 
-    if (weatherData['woeid'] != null) {
-      String apiUrl =
-          'https://www.metaweather.com/api/location/${weatherData['woeid']}';
-      http.Response response = await http.get(apiUrl);
-      Map<String, dynamic> data = json.decode(response.body);
-      Map<String, dynamic> fetchedData = data['consolidated_weather'][0];
+    if (city != null) {
+      http.Response response = await http.get(
+        Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=6a060d4795b813d5a6ba640210d4cbe3&units=metric',
+        ),
+      );
+      Map<String, dynamic> fetchedData = json.decode(response.body);
 
       setState(() {
-        weatherData['city'] = data['title'];
-        weatherData['temp'] = fetchedData['the_temp'];
-        weatherData['wind'] = fetchedData['wind_speed'];
-        weatherData['humidity'] = fetchedData['humidity'];
+        weatherData['city'] = fetchedData['name'];
+        weatherData['temp'] = fetchedData['main']['temp'];
+        weatherData['wind'] = fetchedData['wind']['speed'];
+        weatherData['humidity'] = fetchedData['main']['humidity'];
         weatherData['visibility'] = fetchedData['visibility'];
       });
     }

@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:neo_weather/screens/homeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,12 +14,7 @@ class _SearchBoxState extends State<SearchBox> {
 
   Future<void> fetchWeather(String city, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String searchApiUrl =
-        'https://www.metaweather.com/api/location/search/?query=$city';
-
-    http.Response response = await http.get(searchApiUrl);
-    Map<String, dynamic> weatherData = json.decode(response.body)[0];
-    prefs.setInt('woeid', weatherData['woeid']);
+    prefs.setString('city', city);
 
     Navigator.of(context)
         .pushAndRemoveUntil(
