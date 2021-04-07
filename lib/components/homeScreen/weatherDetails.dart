@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'weatherData.dart';
 
 class WeatherDetails extends StatelessWidget {
-  WeatherDetails(this.weatherData);
+  const WeatherDetails(this.weatherData);
 
   final Map<String, dynamic> weatherData;
 

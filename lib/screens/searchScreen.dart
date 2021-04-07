@@ -10,16 +10,14 @@ class SearchPage extends StatelessWidget {
       body: Stack(
         children: <Widget>[
           Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: Image.asset(
-              'assets/images/cloudy.jpeg',
-              fit: BoxFit.cover,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/cloudy.jpeg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Container(
-            width: double.infinity,
-            height: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
