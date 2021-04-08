@@ -4,9 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
-  HeadSection(this.weatherData);
+  const HeadSection(this.weatherData, this.isSetWeather);
 
   final Map<String, dynamic> weatherData;
+  final bool isSetWeather;
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +42,20 @@ class HeadSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              weatherData['city'] != null
+              isSetWeather == null
                   ? Text(
-                      weatherData['city'],
-                      style: TextStyle(color: Colors.white, fontSize: 38),
+                      'No City Added',
+                      style: TextStyle(color: Colors.white, fontSize: 34),
                     )
-                  : Text(
-                      '- -',
-                      style: TextStyle(color: Colors.white, fontSize: 38),
-                    ),
+                  : weatherData['city'] != null
+                      ? Text(
+                          weatherData['city'],
+                          style: TextStyle(color: Colors.white, fontSize: 38),
+                        )
+                      : Text(
+                          '- -',
+                          style: TextStyle(color: Colors.white, fontSize: 38),
+                        ),
               SizedBox(height: 5),
               Text(
                 '07:50 PM - Monday, 9 Nov 2020',

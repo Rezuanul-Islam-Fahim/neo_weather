@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/homeScreen/headSection.dart';
 import '../components/homeScreen/weatherDetails.dart';
+import 'searchScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,6 +16,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic> weatherData = {};
+  bool isSetWeather;
+
+  Future<void> checkWeather() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() => isSetWeather = prefs.getBool('isSetWeather'));
+  }
 
   Future<void> fetchWeatherData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,9 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         weatherData['city'] = fetchedData['name'];
         weatherData['temp'] = fetchedData['main']['temp'];
+        weatherData['temp_max'] = fetchedData['main']['temp_max'];
+        weatherData['temp_min'] = fetchedData['main']['temp_min'];
         weatherData['wind'] = fetchedData['wind']['speed'];
-        weatherData['humidity'] = fetchedData['main']['humidity'];
-        weatherData['visibility'] = fetchedData['visibility'];
       });
     }
   }
@@ -41,11 +48,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    checkWeather();
     fetchWeatherData();
   }
 
   @override
   Widget build(BuildContext context) {
+    final ButtonStyle addButtonStyle = ElevatedButton.styleFrom(
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -74,12 +89,26 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                HeadSection(weatherData),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: WeatherDetails(weatherData),
-                ),
+                HeadSection(weatherData, isSetWeather),
+                isSetWeather != null
+                    ? Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: double.infinity,
+                        child: WeatherDetails(weatherData),
+                      )
+                    : Column(
+                        children: <Widget>[
+                          ElevatedButton(
+                            style: addButtonStyle,
+                            child: Text('Add City'),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SearchPage()),
+                            ),
+                          ),
+                          SizedBox(height: 100),
+                        ],
+                      ),
               ],
             ),
           ),

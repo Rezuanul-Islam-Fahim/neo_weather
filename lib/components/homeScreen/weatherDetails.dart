@@ -48,21 +48,26 @@ class WeatherDetails extends StatelessWidget {
               value: weatherData['wind'],
               sign: 'km/h',
               barColor: Colors.redAccent,
-              barWidthFactor: 0.7,
+              barWidthFactor:
+                  weatherData['wind'] == null ? 0 : weatherData['wind'] / 25,
             ),
             WeatherData(
-              title: 'Humidity',
-              value: weatherData['humidity'],
-              sign: '%',
+              title: 'Temp Min',
+              value: weatherData['temp_min'],
+              sign: '°C',
               barColor: Colors.blueAccent,
-              barWidthFactor: 0.3,
+              barWidthFactor: weatherData['temp_min'] == null
+                  ? 0
+                  : weatherData['temp_min'] / 50,
             ),
             WeatherData(
-              title: 'Visibility',
-              value: weatherData['visibility'],
-              sign: '%',
+              title: 'Temp Max',
+              value: weatherData['temp_max'],
+              sign: '°C',
               barColor: Colors.greenAccent,
-              barWidthFactor: 0.5,
+              barWidthFactor: weatherData['temp_max'] == null
+                  ? 0
+                  : weatherData['temp_max'] / 50,
             ),
           ],
         ),

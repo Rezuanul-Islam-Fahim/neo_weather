@@ -34,6 +34,7 @@ class _SearchBoxState extends State<SearchBox> {
       if (fetchedData['cod'] != '404') {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('city', city);
+        prefs.setBool('isSetWeather', true);
 
         Navigator.of(context)
             .pushAndRemoveUntil(
