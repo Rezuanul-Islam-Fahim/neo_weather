@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         weatherData['city'] = fetchedData['name'];
+        weatherData['main'] = fetchedData['weather'][0]['main'];
         weatherData['temp'] = fetchedData['main']['temp'];
         weatherData['temp_max'] = fetchedData['main']['temp_max'];
         weatherData['temp_min'] = fetchedData['main']['temp_min'];
@@ -87,9 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle addButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 26),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(6),
       ),
     );
 
@@ -119,7 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: isSetWeather != null
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.start,
               children: <Widget>[
                 HeadSection(weatherData, isSetWeather, openDeleteDialog),
                 isSetWeather != null
@@ -130,15 +133,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : Column(
                         children: <Widget>[
+                          SizedBox(height: 100),
                           ElevatedButton(
                             style: addButtonStyle,
-                            child: Text('Add City'),
+                            child: Text(
+                              'Add City',
+                              style: TextStyle(fontSize: 15),
+                            ),
                             onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => SearchPage()),
                             ),
                           ),
-                          SizedBox(height: 100),
                         ],
                       ),
               ],

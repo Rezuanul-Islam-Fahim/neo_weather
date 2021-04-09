@@ -8,6 +8,15 @@ class WeatherDetails extends StatelessWidget {
 
   final Map<String, dynamic> weatherData;
 
+  Map<String, String> get iconSrc {
+    return {
+      'Clear': 'assets/icons/sun.svg',
+      'Haze': 'assets/icons/fog.svg',
+      'Clouds': 'assets/icons/cloudy.svg',
+      'Rain': 'assets/icons/rain.svg',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,13 +35,15 @@ class WeatherDetails extends StatelessWidget {
         Row(
           children: <Widget>[
             SvgPicture.asset(
-              'assets/icons/moon.svg',
+              weatherData['main'] != null
+                  ? iconSrc[weatherData['main']]
+                  : 'assets/icons/sand-clock.svg',
               width: 32,
               color: Colors.white,
             ),
             SizedBox(width: 10),
             Text(
-              'Night',
+              weatherData['main'] != null ? weatherData['main'] : '- -',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
           ],
