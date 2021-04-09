@@ -45,6 +45,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void openDeleteDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Remove City?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            SizedBox(width: 5),
+            ElevatedButton(
+              child: Text('Remove'),
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.clear();
+                isSetWeather = null;
+                weatherData = {};
+                Navigator.of(context).pop();
+                setState(() {});
+              },
+            ),
+          ],
+          backgroundColor: Colors.grey[900].withOpacity(0.9),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 17),
+          actionsPadding: EdgeInsets.only(right: 15, bottom: 10),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -89,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                HeadSection(weatherData, isSetWeather),
+                HeadSection(weatherData, isSetWeather, openDeleteDialog),
                 isSetWeather != null
                     ? Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),

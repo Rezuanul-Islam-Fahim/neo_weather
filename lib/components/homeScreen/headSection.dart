@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
-  const HeadSection(this.weatherData, this.isSetWeather);
+  const HeadSection(this.weatherData, this.isSetWeather, this.handler);
 
   final Map<String, dynamic> weatherData;
   final bool isSetWeather;
+  final Function handler;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +27,15 @@ class HeadSection extends StatelessWidget {
                 ),
               ),
             ),
-            IconButton(
-              icon: SvgPicture.asset(
-                'assets/icons/menu.svg',
-                color: Colors.white,
-                width: 32,
+            if (isSetWeather != null)
+              IconButton(
+                icon: Icon(
+                  Icons.delete_forever,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                onPressed: handler,
               ),
-              onPressed: () {},
-            ),
           ],
         ),
         Container(
