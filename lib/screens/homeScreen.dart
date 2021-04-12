@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
-          backgroundColor: Colors.grey[900].withOpacity(0.9),
+          backgroundColor: Colors.grey[900].withOpacity(0.8),
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 17),
           actionsPadding: EdgeInsets.only(right: 15, bottom: 10),
         );

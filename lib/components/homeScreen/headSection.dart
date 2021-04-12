@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:timer_builder/timer_builder.dart';
+import 'package:intl/intl.dart';
+
 import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
@@ -58,9 +61,18 @@ class HeadSection extends StatelessWidget {
                           style: TextStyle(color: Colors.white, fontSize: 38),
                         ),
               SizedBox(height: 5),
-              Text(
-                '07:50 PM - Monday, 9 Nov 2020',
-                style: TextStyle(color: Colors.white, fontSize: 17),
+              TimerBuilder.periodic(
+                Duration(seconds: 1),
+                builder: (BuildContext context) {
+                  return Text(
+                    DateFormat('hh:mm:ss a - E, MMMM d, y')
+                        .format(DateTime.now()),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                    ),
+                  );
+                },
               ),
             ],
           ),
