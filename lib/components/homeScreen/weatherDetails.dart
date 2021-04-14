@@ -62,8 +62,11 @@ class WeatherDetails extends StatelessWidget {
               value: weatherData['wind'],
               sign: 'km/h',
               barColor: Colors.redAccent,
-              barWidthFactor:
-                  weatherData['wind'] == null ? 0 : weatherData['wind'] / 25,
+              barWidthFactor: weatherData['wind'] != null
+                  ? weatherData['wind'] / 25 <= 1
+                      ? weatherData['wind'] / 25
+                      : 1
+                  : 0,
             ),
             WeatherData(
               title: 'Temp Min',
@@ -72,7 +75,7 @@ class WeatherDetails extends StatelessWidget {
               barColor: Colors.blueAccent,
               barWidthFactor: weatherData['temp_min'] == null
                   ? 0
-                  : abs(weatherData['temp_min']) / 50,
+                  : abs(weatherData['temp_min']) / 60,
             ),
             WeatherData(
               title: 'Temp Max',
@@ -81,7 +84,7 @@ class WeatherDetails extends StatelessWidget {
               barColor: Colors.greenAccent,
               barWidthFactor: weatherData['temp_max'] == null
                   ? 0
-                  : abs(weatherData['temp_max']) / 50,
+                  : abs(weatherData['temp_max']) / 60,
             ),
           ],
         ),
