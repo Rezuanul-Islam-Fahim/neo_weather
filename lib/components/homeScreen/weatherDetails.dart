@@ -8,14 +8,17 @@ class WeatherDetails extends StatelessWidget {
 
   final Map<String, dynamic> weatherData;
 
-  Map<String, String> get iconSrc {
-    return {
-      'Clear': 'assets/icons/sun.svg',
-      'Haze': 'assets/icons/fog.svg',
-      'Clouds': 'assets/icons/cloudy.svg',
-      'Rain': 'assets/icons/rain.svg',
-    };
+  dynamic abs(dynamic value) {
+    return value < 0 ? -(value) : value;
   }
+
+  static const Map<String, String> iconSrc = {
+    'Clear': 'assets/icons/sun.svg',
+    'Haze': 'assets/icons/haze.svg',
+    'Clouds': 'assets/icons/cloudy.svg',
+    'Rain': 'assets/icons/rain.svg',
+    'Snow': 'assets/icons/snow.svg',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,7 @@ class WeatherDetails extends StatelessWidget {
               barColor: Colors.blueAccent,
               barWidthFactor: weatherData['temp_min'] == null
                   ? 0
-                  : weatherData['temp_min'] / 50,
+                  : abs(weatherData['temp_min']) / 50,
             ),
             WeatherData(
               title: 'Temp Max',
@@ -78,7 +81,7 @@ class WeatherDetails extends StatelessWidget {
               barColor: Colors.greenAccent,
               barWidthFactor: weatherData['temp_max'] == null
                   ? 0
-                  : weatherData['temp_max'] / 50,
+                  : abs(weatherData['temp_max']) / 50,
             ),
           ],
         ),
