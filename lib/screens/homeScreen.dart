@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/homeScreen/headSection.dart';
 import '../components/homeScreen/weatherDetails.dart';
+import '../components/homeScreen/helpers.dart';
 import 'searchScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -97,28 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Image.asset(
-            'assets/images/night.jpg',
-            fit: BoxFit.cover,
-            height: double.infinity,
-          ),
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            padding: EdgeInsets.fromLTRB(15, 45, 15, 40),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  Colors.white24.withOpacity(0.25),
-                  Colors.white12,
-                  Colors.white12,
-                  Colors.white10,
-                ],
-                stops: [0.1, 0.3, 0.7, 1],
-              ),
+          if (isSetWeather == null)
+            Image.asset(
+              'assets/images/weather.jpg',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
+          if (weatherData['main'] != null)
+            Image.asset(
+              weatherStatus[weatherData['main']]['img'],
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          if (weatherData['main'] != null)
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: weatherStatus[weatherData['main']]['overlay'],
+            ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(15, 45, 15, 40),
             child: Column(
               mainAxisAlignment: isSetWeather != null
                   ? MainAxisAlignment.spaceBetween

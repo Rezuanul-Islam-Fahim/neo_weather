@@ -10,7 +10,7 @@ class NeoWeather extends StatelessWidget {
     return MaterialApp(
       title: 'Neo Weather',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(scaffoldBackgroundColor: Colors.black87),
+      theme: ThemeData(scaffoldBackgroundColor: Colors.grey[900]),
       home: HomeScreen(),
     );
   }

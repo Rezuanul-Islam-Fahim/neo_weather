@@ -2,23 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'weatherData.dart';
+import 'helpers.dart';
 
 class WeatherDetails extends StatelessWidget {
   const WeatherDetails(this.weatherData);
 
   final Map<String, dynamic> weatherData;
-
-  dynamic abs(dynamic value) {
-    return value < 0 ? -(value) : value;
-  }
-
-  static const Map<String, String> iconSrc = {
-    'Clear': 'assets/icons/sun.svg',
-    'Haze': 'assets/icons/haze.svg',
-    'Clouds': 'assets/icons/cloudy.svg',
-    'Rain': 'assets/icons/rain.svg',
-    'Snow': 'assets/icons/snow.svg',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +28,7 @@ class WeatherDetails extends StatelessWidget {
           children: <Widget>[
             SvgPicture.asset(
               weatherData['main'] != null
-                  ? iconSrc[weatherData['main']]
+                  ? weatherStatus[weatherData['main']]['icon']
                   : 'assets/icons/sand-clock.svg',
               width: 32,
               color: Colors.white,
