@@ -37,7 +37,7 @@ class HeadSection extends StatelessWidget {
                   icon: const Icon(
                     Icons.delete_forever,
                     color: Colors.white,
-                    size: 30,
+                    size: 28,
                   ),
                   onPressed: handler,
                 ),
@@ -71,7 +71,7 @@ class HeadSection extends StatelessWidget {
                               fontSize: 38,
                             ),
                           ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 8),
                 TimerBuilder.periodic(
                   const Duration(seconds: 1),
                   builder: (BuildContext context) {

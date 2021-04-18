@@ -25,20 +25,26 @@ class WeatherData extends StatelessWidget {
           title,
           style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
+        const SizedBox(height: 4),
         value != null
             ? Text(
                 value.toStringAsFixed(0),
-                style: const TextStyle(color: Colors.white, fontSize: 25),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               )
             : Text(
                 '- -',
-                style: const TextStyle(color: Colors.white, fontSize: 25),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
+        const SizedBox(height: 4),
         Text(
           sign,
           style: const TextStyle(color: Colors.white, fontSize: 15),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         ProgressBar(barColor, barWidthFactor),
       ],
     );

@@ -62,7 +62,7 @@ class _SearchBoxState extends State<SearchBox> {
     return Column(
       children: <Widget>[
         Container(
-          height: 52,
+          height: 53,
           margin: const EdgeInsets.symmetric(horizontal: 25),
           padding: const EdgeInsets.only(left: 25),
           decoration: BoxDecoration(
@@ -74,12 +74,12 @@ class _SearchBoxState extends State<SearchBox> {
               Expanded(
                 child: TextField(
                   controller: inputController,
-                  style: const TextStyle(color: Colors.white, fontSize: 17),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                   decoration: const InputDecoration(
                     hintText: 'Enter City Name',
                     hintStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 17,
+                      fontSize: 16,
                     ),
                     border: InputBorder.none,
                   ),
@@ -92,8 +92,8 @@ class _SearchBoxState extends State<SearchBox> {
                   context,
                 ),
                 child: Container(
-                  width: 55,
-                  height: 55,
+                  width: 53,
+                  height: 53,
                   decoration: BoxDecoration(
                     color: Colors.blueAccent,
                     borderRadius: BorderRadius.circular(30),
