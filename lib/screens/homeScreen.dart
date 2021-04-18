@@ -52,28 +52,28 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Remove City?'),
+          title: const Text('Remove City?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            SizedBox(width: 5),
+            const SizedBox(width: 2),
             ElevatedButton(
-              child: Text('Remove'),
+              child: const Text('Remove'),
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();
                 isSetWeather = null;
                 weatherData = {};
-                Navigator.of(context).pop();
                 setState(() {});
+                Navigator.of(context).pop();
               },
             ),
           ],
           backgroundColor: Colors.grey[900].withOpacity(0.8),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 17),
-          actionsPadding: EdgeInsets.only(right: 15, bottom: 10),
+          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 17),
+          actionsPadding: const EdgeInsets.only(right: 15, bottom: 10),
         );
       },
     );
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle addButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 26),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 26),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(6),
       ),
@@ -114,42 +114,33 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           if (weatherData['main'] != null)
             Container(
-              width: double.infinity,
-              height: double.infinity,
               decoration: weatherStatus[weatherData['main']]['overlay'],
             ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(15, 45, 15, 40),
-            child: Column(
-              mainAxisAlignment: isSetWeather != null
-                  ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.start,
-              children: <Widget>[
-                HeadSection(weatherData, isSetWeather, openDeleteDialog),
-                isSetWeather != null
-                    ? Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        width: double.infinity,
-                        child: WeatherDetails(weatherData),
-                      )
-                    : Column(
-                        children: <Widget>[
-                          SizedBox(height: 100),
-                          ElevatedButton(
-                            style: addButtonStyle,
-                            child: Text(
-                              'Add City',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => SearchPage()),
-                            ),
+          Column(
+            mainAxisAlignment: isSetWeather != null
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            children: <Widget>[
+              HeadSection(weatherData, isSetWeather, openDeleteDialog),
+              isSetWeather != null
+                  ? WeatherDetails(weatherData)
+                  : Column(
+                      children: <Widget>[
+                        const SizedBox(height: 100),
+                        ElevatedButton(
+                          style: addButtonStyle,
+                          child: const Text(
+                            'Add City',
+                            style: const TextStyle(fontSize: 15),
                           ),
-                        ],
-                      ),
-              ],
-            ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => SearchPage()),
+                          ),
+                        ),
+                      ],
+                    ),
+            ],
           ),
         ],
       ),

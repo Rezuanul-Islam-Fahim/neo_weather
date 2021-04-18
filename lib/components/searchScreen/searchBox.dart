@@ -63,8 +63,8 @@ class _SearchBoxState extends State<SearchBox> {
       children: <Widget>[
         Container(
           height: 52,
-          margin: EdgeInsets.symmetric(horizontal: 25),
-          padding: EdgeInsets.only(left: 25),
+          margin: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.only(left: 25),
           decoration: BoxDecoration(
             color: Colors.white12,
             borderRadius: BorderRadius.circular(30),
@@ -74,10 +74,10 @@ class _SearchBoxState extends State<SearchBox> {
               Expanded(
                 child: TextField(
                   controller: inputController,
-                  style: TextStyle(color: Colors.white, fontSize: 17),
-                  decoration: InputDecoration(
+                  style: const TextStyle(color: Colors.white, fontSize: 17),
+                  decoration: const InputDecoration(
                     hintText: 'Enter City Name',
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                     ),
@@ -98,7 +98,7 @@ class _SearchBoxState extends State<SearchBox> {
                     color: Colors.blueAccent,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_forward_rounded,
                     size: 26,
                     color: Colors.white,
@@ -108,20 +108,20 @@ class _SearchBoxState extends State<SearchBox> {
             ],
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         if (isLoading)
           SizedBox(
             width: 18,
             height: 18,
             child: Theme(
               data: ThemeData(accentColor: Colors.white70),
-              child: CircularProgressIndicator(strokeWidth: 1.5),
+              child: const CircularProgressIndicator(strokeWidth: 1.5),
             ),
           ),
         if (isWrong)
-          Text(
+          const Text(
             'Enter a valid city name',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.redAccent,
             ),

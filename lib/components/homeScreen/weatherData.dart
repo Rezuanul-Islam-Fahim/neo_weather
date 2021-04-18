@@ -23,22 +23,22 @@ class WeatherData extends StatelessWidget {
       children: <Widget>[
         Text(
           title,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
         value != null
             ? Text(
                 value.toStringAsFixed(0),
-                style: TextStyle(color: Colors.white, fontSize: 25),
+                style: const TextStyle(color: Colors.white, fontSize: 25),
               )
             : Text(
                 '- -',
-                style: TextStyle(color: Colors.white, fontSize: 25),
+                style: const TextStyle(color: Colors.white, fontSize: 25),
               ),
         Text(
           sign,
-          style: TextStyle(color: Colors.white, fontSize: 15),
+          style: const TextStyle(color: Colors.white, fontSize: 15),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         ProgressBar(barColor, barWidthFactor),
       ],
     );

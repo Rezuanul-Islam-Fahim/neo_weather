@@ -12,7 +12,7 @@ class SearchPage extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/cloudy.jpeg'),
+                image: const AssetImage('assets/images/cloudy.jpeg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -27,7 +27,7 @@ class SearchPage extends StatelessWidget {
                   Colors.black26,
                   Colors.black12,
                 ],
-                stops: [0.2, 0.6, 1],
+                stops: const [0.2, 0.6, 1],
               ),
             ),
           ),
@@ -39,19 +39,19 @@ class SearchPage extends StatelessWidget {
                 color: Colors.white,
                 width: 130,
               ),
-              SizedBox(height: 5),
-              Text(
+              const SizedBox(height: 5),
+              const Text(
                 'Add City to See Weather Details',
-                style: TextStyle(color: Colors.white, fontSize: 19),
+                style: const TextStyle(color: Colors.white, fontSize: 19),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               SearchBox(),
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(top: 45, left: 15),
+            padding: const EdgeInsets.only(top: 45, left: 15),
             child: IconButton(
-              icon: Icon(Icons.arrow_back_rounded),
+              icon: const Icon(Icons.arrow_back_rounded),
               iconSize: 32,
               color: Colors.white,
               onPressed: () => Navigator.of(context).pop(),
