@@ -74,12 +74,12 @@ class _SearchBoxState extends State<SearchBox> {
               Expanded(
                 child: TextField(
                   controller: inputController,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                   decoration: const InputDecoration(
                     hintText: 'Enter City Name',
                     hintStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 15,
                     ),
                     border: InputBorder.none,
                   ),

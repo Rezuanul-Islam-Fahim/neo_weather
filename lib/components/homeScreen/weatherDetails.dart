@@ -19,11 +19,11 @@ class WeatherDetails extends StatelessWidget {
           weatherData['temp'] != null
               ? Text(
                   '${weatherData['temp'].toStringAsFixed(0)}°C',
-                  style: const TextStyle(color: Colors.white, fontSize: 60),
+                  style: const TextStyle(color: Colors.white, fontSize: 62),
                 )
               : Text(
                   '- -',
-                  style: const TextStyle(color: Colors.white, fontSize: 60),
+                  style: const TextStyle(color: Colors.white, fontSize: 62),
                 ),
           const SizedBox(height: 5),
           Row(
@@ -38,7 +38,7 @@ class WeatherDetails extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 weatherData['main'] != null ? weatherData['main'] : '- -',
-                style: const TextStyle(color: Colors.white, fontSize: 23),
+                style: const TextStyle(color: Colors.white, fontSize: 22),
               ),
             ],
           ),
