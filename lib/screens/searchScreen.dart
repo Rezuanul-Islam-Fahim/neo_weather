@@ -41,7 +41,7 @@ class SearchPage extends StatelessWidget {
               ),
               const Text(
                 'Add City to See Weather Details',
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.white, fontSize: 17),
               ),
               const SizedBox(height: 20),
               SearchBox(),

@@ -23,7 +23,7 @@ class WeatherData extends StatelessWidget {
       children: <Widget>[
         Text(
           title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 17),
         ),
         const SizedBox(height: 4),
         value != null
@@ -44,7 +44,7 @@ class WeatherData extends StatelessWidget {
           sign,
           style: const TextStyle(color: Colors.white, fontSize: 15),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 7),
         ProgressBar(barColor, barWidthFactor),
       ],
     );

@@ -53,7 +53,7 @@ class HeadSection extends StatelessWidget {
                         'No City Added',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 34,
+                          fontSize: 32,
                         ),
                       )
                     : weatherData['city'] != null
@@ -61,14 +61,14 @@ class HeadSection extends StatelessWidget {
                             weatherData['city'],
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 38,
+                              fontSize: 36,
                             ),
                           )
                         : const Text(
                             '- -',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 38,
+                              fontSize: 36,
                             ),
                           ),
                 const SizedBox(height: 8),
@@ -80,7 +80,7 @@ class HeadSection extends StatelessWidget {
                           .format(DateTime.now()),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 17,
+                        fontSize: 16,
                       ),
                     );
                   },

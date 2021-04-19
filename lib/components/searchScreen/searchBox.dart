@@ -62,7 +62,7 @@ class _SearchBoxState extends State<SearchBox> {
     return Column(
       children: <Widget>[
         Container(
-          height: 53,
+          height: 52,
           margin: const EdgeInsets.symmetric(horizontal: 25),
           padding: const EdgeInsets.only(left: 25),
           decoration: BoxDecoration(
@@ -92,8 +92,8 @@ class _SearchBoxState extends State<SearchBox> {
                   context,
                 ),
                 child: Container(
-                  width: 53,
-                  height: 53,
+                  width: 52,
+                  height: 52,
                   decoration: BoxDecoration(
                     color: Colors.blueAccent,
                     borderRadius: BorderRadius.circular(30),
@@ -111,11 +111,11 @@ class _SearchBoxState extends State<SearchBox> {
         const SizedBox(height: 15),
         if (isLoading)
           SizedBox(
-            width: 18,
-            height: 18,
+            width: 15,
+            height: 15,
             child: Theme(
               data: ThemeData(accentColor: Colors.white70),
-              child: const CircularProgressIndicator(strokeWidth: 1.5),
+              child: const CircularProgressIndicator(strokeWidth: 1.6),
             ),
           ),
         if (isWrong)
