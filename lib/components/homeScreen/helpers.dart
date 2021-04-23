@@ -36,6 +36,21 @@ Map<String, dynamic> weatherStatus = {
       ),
     ),
   },
+  'Smoke': {
+    'img': 'assets/images/haze.jpg',
+    'icon': 'assets/icons/haze.svg',
+    'overlay': BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: <Color>[
+          Colors.black12,
+          Colors.black12.withOpacity(0.05),
+        ],
+        stops: const [0.3, 1],
+      ),
+    ),
+  },
   'Mist': {
     'img': 'assets/images/mist.jpg',
     'icon': 'assets/icons/haze.svg',
