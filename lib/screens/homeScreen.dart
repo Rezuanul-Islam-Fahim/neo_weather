@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic> weatherData = {};
   bool isSetWeather;
+  String weatherMainStatus;
 
   Future<void> checkWeather() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -39,12 +40,24 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         weatherData['city'] = fetchedData['name'];
         weatherData['main'] = fetchedData['weather'][0]['main'];
+        weatherMainStatus = weatherData['main'];
         weatherData['temp'] = fetchedData['main']['temp'];
         weatherData['temp_max'] = fetchedData['main']['temp_max'];
         weatherData['temp_min'] = fetchedData['main']['temp_min'];
         weatherData['wind'] = fetchedData['wind']['speed'];
       });
     }
+  }
+
+  Future<void> pullToRefresh() async {
+    setState(() {
+      weatherData['main'] = null;
+      weatherData['temp'] = null;
+      weatherData['temp_max'] = null;
+      weatherData['temp_min'] = null;
+      weatherData['wind'] = null;
+    });
+    fetchWeatherData();
   }
 
   void openDeleteDialog() async {
@@ -88,6 +101,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: isSetWeather != null
+          ? RefreshIndicator(
+              backgroundColor: Colors.grey[900],
+              onRefresh: pullToRefresh,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverFillViewport(
+                    delegate: SliverChildListDelegate([
+                      _buildWeatherBody(),
+                    ]),
+                  ),
+                ],
+              ),
+            )
+          : _buildNoWeatherBody(context),
+    );
+  }
+
+  Widget _buildNoWeatherBody(BuildContext context) {
     final ButtonStyle addButtonStyle = ElevatedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 26),
       shape: RoundedRectangleBorder(
@@ -95,55 +128,61 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          if (isSetWeather == null)
-            Image.asset(
-              'assets/images/weather.jpg',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          'assets/images/weather.jpg',
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        Column(
+          children: <Widget>[
+            HeadSection(weatherData, isSetWeather, openDeleteDialog),
+            Column(
+              children: <Widget>[
+                const SizedBox(height: 100),
+                ElevatedButton(
+                  style: addButtonStyle,
+                  child: const Text(
+                    'Add City',
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SearchPage()),
+                  ),
+                ),
+              ],
             ),
-          if (weatherData['main'] != null)
-            Image.asset(
-              weatherStatus[weatherData['main']]['img'],
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-          if (weatherData['main'] != null)
-            Container(
-              decoration: weatherStatus[weatherData['main']]['overlay'],
-            ),
-          Column(
-            mainAxisAlignment: isSetWeather != null
-                ? MainAxisAlignment.spaceBetween
-                : MainAxisAlignment.start,
-            children: <Widget>[
-              HeadSection(weatherData, isSetWeather, openDeleteDialog),
-              isSetWeather != null
-                  ? WeatherDetails(weatherData)
-                  : Column(
-                      children: <Widget>[
-                        const SizedBox(height: 100),
-                        ElevatedButton(
-                          style: addButtonStyle,
-                          child: const Text(
-                            'Add City',
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => SearchPage()),
-                          ),
-                        ),
-                      ],
-                    ),
-            ],
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeatherBody() {
+    return Stack(
+      children: <Widget>[
+        if (weatherMainStatus != null)
+          Image.asset(
+            weatherStatus[weatherMainStatus]['img'],
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
-        ],
-      ),
+        if (weatherMainStatus != null)
+          Container(
+            decoration: weatherStatus[weatherMainStatus]['overlay'],
+          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            HeadSection(weatherData, isSetWeather, openDeleteDialog),
+            WeatherDetails(weatherData),
+          ],
+        ),
+      ],
     );
   }
 }
