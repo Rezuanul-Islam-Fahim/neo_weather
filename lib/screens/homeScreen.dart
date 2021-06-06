@@ -19,10 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic> weatherData = {};
   bool isSetWeather;
   String weatherMainStatus;
+  bool isLoading = true;
 
   Future<void> checkWeather() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() => isSetWeather = prefs.getBool('isSetWeather'));
+    setState(() {
+      isSetWeather = prefs.getBool('isSetWeather');
+      isLoading = false;
+    });
   }
 
   Future<void> fetchWeatherData() async {
@@ -102,21 +106,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isSetWeather != null
-          ? RefreshIndicator(
-              backgroundColor: Colors.grey[900],
-              onRefresh: pullToRefresh,
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverFillViewport(
-                    delegate: SliverChildListDelegate([
-                      _buildWeatherBody(),
-                    ]),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : isSetWeather != null
+              ? RefreshIndicator(
+                  backgroundColor: Colors.grey[900],
+                  onRefresh: pullToRefresh,
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      SliverFillViewport(
+                        delegate: SliverChildListDelegate([
+                          _buildWeatherBody(),
+                        ]),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          : _buildNoWeatherBody(context),
+                )
+              : _buildNoWeatherBody(context),
     );
   }
 
