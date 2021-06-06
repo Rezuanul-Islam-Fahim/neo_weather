@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       weatherData['temp_min'] = null;
       weatherData['wind'] = null;
     });
-    fetchWeatherData();
+    await fetchWeatherData();
   }
 
   void openDeleteDialog() async {

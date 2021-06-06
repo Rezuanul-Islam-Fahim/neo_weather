@@ -113,9 +113,9 @@ class _SearchBoxState extends State<SearchBox> {
           SizedBox(
             width: 15,
             height: 15,
-            child: Theme(
-              data: ThemeData(accentColor: Colors.white70),
-              child: const CircularProgressIndicator(strokeWidth: 1.6),
+            child: const CircularProgressIndicator(
+              strokeWidth: 1.4,
+              color: Colors.white70,
             ),
           ),
         if (isWrong)
