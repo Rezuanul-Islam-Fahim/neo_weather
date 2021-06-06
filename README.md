@@ -18,7 +18,7 @@ A weather app built with dart & flutter for android & ios devices.
 - Attractive design & UI
 - Smooth performance
 - Dynamic background image for different weathers
-- City form validation when setting city
+- City form validation when searching city
 - Dynamic weather status icon
 - Pull to refresh weather
 - Realtime digital clock
