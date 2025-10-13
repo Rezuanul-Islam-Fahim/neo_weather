@@ -199,9 +199,8 @@ jobs:
           echo "- **Appetize Upload:** ${{ steps.upload_appetize.outcome == 'success' && '✅ Success' || '⚠️ Failed or Skipped' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## 📥 Download Links" >> $GITHUB_STEP_SUMMARY
-          echo "- **GitHub Artifact:** [View Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-          echo "- **Direct APK Download:** [Download ${{ steps.get_version.outputs.apk_name }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/latest/download)" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.upload_appetize.outcome }}" == "success" ]; then
+          echo "- **GitHub Artifact:** [View & Download APK](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.upload_appetize.outcome }}" == "success" ] && [ -n "${{ steps.upload_appetize.outputs.publicURL }}" ]; then
             echo "- **Appetize.io:** [Test App Online](${{ steps.upload_appetize.outputs.publicURL }})" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -223,7 +222,7 @@ jobs:
             const appetizeUrl = '${{ steps.upload_appetize.outputs.publicURL }}';
             
             let appetizeLink = '';
-            if ('${{ steps.upload_appetize.outcome }}' === 'success') {
+            if ('${{ steps.upload_appetize.outcome }}' === 'success' && appetizeUrl && appetizeUrl !== '') {
               appetizeLink = `\n- **🎮 Test on Appetize.io:** [Launch App](${appetizeUrl})`;
             }
             
@@ -246,8 +245,7 @@ jobs:
             - **Artifact Upload:** ✅ Success
             
             ## 📥 Download & Test
-            - **📦 View Artifacts:** [GitHub Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            - **⬇️ Direct APK Download:** [Download ${{ steps.get_version.outputs.apk_name }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/latest/download)${appetizeLink}
+            - **📦 Download APK:** [View Artifacts & Download](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})${appetizeLink}
             
             ## 🔐 Security
             - SHA256 checksum is included in the artifact for integrity verification

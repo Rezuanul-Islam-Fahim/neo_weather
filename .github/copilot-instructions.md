@@ -138,7 +138,13 @@ flutter test --coverage
 - **No state management library** - uses built-in `setState`
 
 ## Platform-Specific Notes
-- **Android**: `minSdkVersion` from Flutter config, `targetSdkVersion` 35, namespace `com.rezuanulfahim.neo_weather`
+- **Android**: 
+  - Package: `com.rezuanulfahim.neo_weather`
+  - Namespace: `com.rezuanulfahim.neo_weather`
+  - `minSdkVersion`: From Flutter config
+  - `targetSdkVersion`: 35
+  - `compileSdk`: 36
+  - MainActivity location: `android/app/src/main/kotlin/com/rezuanulfahim/neo_weather/MainActivity.kt`
 - **iOS**: Standard Flutter configuration
 - **Orientation**: Portrait-only (enforced in `main.dart`)
 - **Assets**: SVG icons require `flutter_svg`, images are standard assets
