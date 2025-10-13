@@ -33,7 +33,8 @@ class WeatherDetails extends StatelessWidget {
                     ? weatherStatus[weatherData['main']]['icon']
                     : 'assets/icons/sand-clock.svg',
                 width: 32,
-                color: Colors.white,
+                colorFilter:
+                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 10),
               Text(

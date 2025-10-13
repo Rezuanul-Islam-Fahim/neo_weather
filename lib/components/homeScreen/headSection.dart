@@ -6,11 +6,13 @@ import 'package:intl/intl.dart';
 import '../../screens/searchScreen.dart';
 
 class HeadSection extends StatelessWidget {
-  const HeadSection(this.weatherData, this.isSetWeather, this.handler);
+  const HeadSection(this.weatherData, this.isSetWeather, this.handler,
+      {Key? key})
+      : super(key: key);
 
   final Map<String, dynamic> weatherData;
-  final bool isSetWeather;
-  final Function handler;
+  final bool? isSetWeather;
+  final VoidCallback handler;
 
   @override
   Widget build(BuildContext context) {

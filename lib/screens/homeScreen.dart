@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../components/homeScreen/headSection.dart';
 import '../components/homeScreen/weatherDetails.dart';
@@ -17,8 +18,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic> weatherData = {};
-  bool isSetWeather;
-  String weatherMainStatus;
+  bool? isSetWeather;
+  String? weatherMainStatus;
   bool isLoading = true;
 
   Future<void> checkWeather() async {
@@ -31,12 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchWeatherData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String city = prefs.getString('city');
+    String? city = prefs.getString('city');
+    final apiKey = dotenv.env['OPENWEATHER_API_KEY'];
 
-    if (city != null) {
+    if (city != null && apiKey != null) {
       http.Response response = await http.get(
         Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=6a060d4795b813d5a6ba640210d4cbe3&units=metric',
+          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric',
         ),
       );
       Map<String, dynamic> fetchedData = json.decode(response.body);
@@ -81,14 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();
-                isSetWeather = null;
-                weatherData = {};
-                setState(() {});
+                setState(() {
+                  isSetWeather = null;
+                  weatherData = {};
+                });
                 Navigator.of(context).pop();
               },
             ),
           ],
-          backgroundColor: Colors.grey[900].withOpacity(0.8),
+          backgroundColor: Colors.grey[900]?.withValues(alpha: 0.8),
           titleTextStyle: const TextStyle(color: Colors.white, fontSize: 17),
           actionsPadding: const EdgeInsets.only(right: 15, bottom: 10),
         );

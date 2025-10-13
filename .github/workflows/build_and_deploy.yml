@@ -1,0 +1,82 @@
+# .github/workflows/build_and_deploy.yml
+
+# A descriptive name for your workflow
+name: Build Flutter and Upload to Appetize.io
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull requests that target the "master" branch
+  pull_request:
+    branches: [ master ]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-and-upload:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # 1. Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # 2. Set up the Java Development Kit (JDK) environment, required for Android builds
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Set up the Flutter SDK for the job
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.6'
+          channel: 'stable'
+          cache: true # Caches Flutter dependencies for faster builds
+
+      # 4. Cache Gradle dependencies
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 5. Get all the Flutter packages
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 6. Create .env file from secrets
+      - name: Create .env file
+        run: |
+          echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" > .env
+
+      # 7. Build the release version of the Android APK
+      # The output is located at build/app/outputs/flutter-apk/app-release.apk
+      - name: Build Android APK
+        run: flutter build apk --release
+
+      # 8. Upload the generated APK to Appetize.io using a dedicated action
+      - name: Upload to Appetize.io
+        uses: appetizeio/github-action-appetize@v1.0.5
+        with:
+          # Use the secret token you stored earlier
+          apiToken: ${{ secrets.APPETIZE_API_TOKEN }}
+          
+          # Path to the file you want to upload
+          appFile: build/app/outputs/flutter-apk/app-release.apk
+          
+          # Specify the platform
+          platform: android
+
+          # This publicKey is used to update an existing app.
+          # If this secret is not set, a new app will be created.
+          publicKey: ${{ secrets.APPETIZE_PUBLIC_KEY }}

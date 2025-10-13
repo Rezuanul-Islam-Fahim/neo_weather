@@ -30,7 +30,7 @@ Map<String, dynamic> weatherStatus = {
         end: Alignment.bottomRight,
         colors: <Color>[
           Colors.black12,
-          Colors.black12.withOpacity(0.05),
+          Colors.black12.withValues(alpha: 0.05),
         ],
         stops: const [0.3, 1],
       ),
@@ -45,7 +45,7 @@ Map<String, dynamic> weatherStatus = {
         end: Alignment.bottomRight,
         colors: <Color>[
           Colors.black12,
-          Colors.black12.withOpacity(0.05),
+          Colors.black12.withValues(alpha: 0.05),
         ],
         stops: const [0.3, 1],
       ),
@@ -60,7 +60,7 @@ Map<String, dynamic> weatherStatus = {
         end: Alignment.bottomRight,
         colors: <Color>[
           Colors.black12,
-          Colors.black12.withOpacity(0.05),
+          Colors.black12.withValues(alpha: 0.05),
         ],
         stops: const [0.1, 1],
       ),
@@ -74,7 +74,7 @@ Map<String, dynamic> weatherStatus = {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Colors.black.withOpacity(0.25),
+          Colors.black.withValues(alpha: 0.25),
           Colors.black26,
           Colors.black12,
           Colors.black12,
@@ -92,7 +92,7 @@ Map<String, dynamic> weatherStatus = {
         end: Alignment.bottomRight,
         colors: <Color>[
           Colors.black26,
-          Colors.black.withOpacity(0.05),
+          Colors.black.withValues(alpha: 0.05),
         ],
         stops: const [0.3, 1],
       ),
@@ -106,7 +106,7 @@ Map<String, dynamic> weatherStatus = {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Colors.black12.withOpacity(0.08),
+          Colors.black12.withValues(alpha: 0.08),
           Colors.black38,
         ],
         stops: const [0.3, 0.7],
