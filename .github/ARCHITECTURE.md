@@ -52,10 +52,17 @@
 │  │ Rename APK   │→ │ Generate     │→ │ Upload as    │         │
 │  │ with Version │  │ SHA256       │  │ Artifact     │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                                              │                   │
+│                                              ▼                   │
+│                    ┌──────────────┐  ┌──────────────┐          │
+│                    │ Get Artifact │→ │ Store        │          │
+│                    │ ID via API   │  │ Artifact ID  │          │
+│                    └──────────────┘  └──────────────┘          │
 │                                                                  │
-│  APK Name: neo_weather-{VERSION}.apk (e.g., 1.1.0+4)           │
+│  APK Name: neo_weather-{VERSION}.apk (e.g., 1.1.0+5)           │
 │  Includes: APK + SHA256 checksum                                │
 │  Retention: 30 days                                             │
+│  Artifact ID: Used for direct download links                    │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
@@ -94,9 +101,15 @@
 │  Contains:                                                       │
 │  • Build information (version, build number, date)              │
 │  • Build status (analysis, APK, Appetize upload)                │
-│  • Download links (GitHub artifacts)                            │
+│  • Direct download links (GitHub artifacts with artifact ID)    │
 │  • Live preview link (Appetize.io, if successful)               │
 │  • SHA256 checksum for security                                 │
+│                                                                  │
+│  Download Link Format:                                          │
+│  {server_url}/{repo}/actions/runs/{run_id}/artifacts/{id}      │
+│                                                                  │
+│  Appetize Link: Direct URL from upload response                 │
+│  (e.g., https://appetize.io/app/{publicKey})                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -229,6 +242,13 @@ Secret Usage Flow:
                     │
                     ▼
          ┌───────────────────────────┐
+         │ Get Artifact ID via       │
+         │ GitHub API                │
+         │ (For direct download)     │
+         └──────────┬────────────────┘
+                    │
+                    ▼
+         ┌───────────────────────────┐
          │ Is APPETIZE_PUBLIC_KEY    │
          │ defined in secrets?       │
          └──────────┬────────────────┘
@@ -266,8 +286,9 @@ Secret Usage Flow:
          │ Summary & PR Comment      │
          │                           │
          │ • Build info              │
-         │ • Download links          │
-         │ • Appetize URL            │
+         │ • Direct download link    │
+         │   (with artifact ID)      │
+         │ • Appetize URL (if set)   │
          │ • SHA256 checksum         │
          └───────────────────────────┘
 ```
@@ -463,9 +484,11 @@ neo_weather-1.1.0+4.apk: OK
 - APK Build: ✅ Success
 - Appetize Upload: ✅ Success (or ⚠️ Failed or Skipped)
 
-## 📥 Download Links
-- GitHub Artifact: [View & Download APK]
-- Appetize.io: [Test App Online] (if successful)
+## 📥 Download & Test
+- **GitHub Artifact:** [neo_weather-1.1.0+4.apk](Direct Download Link)
+  > 💡 **Tip:** Click the link above to download the APK directly.
+- **Appetize.io:** [Test App Online](https://appetize.io/app/...) (if successful)
+  > Click the link above to test your app in the browser!
 
 ## 🔐 Security
 - SHA256 checksum included in artifact
@@ -495,8 +518,13 @@ neo_weather-1.1.0+4.apk: OK
 - Artifact Upload: ✅ Success
 
 ## 📥 Download & Test
-- 📦 Download APK: [View Artifacts & Download]
-- 🎮 Test on Appetize.io: [Launch App] (if available)
+- **📦 Download APK:** [neo_weather-1.1.0+4](Direct link to artifact)
+  
+  > 💡 **Tip:** Click the link above to download the APK directly.
+
+- **🎮 Test on Appetize.io:** [Launch App](https://appetize.io/app/...)
+  
+  Click the link above to test your app in the browser!
 
 ## 🔐 Security
 - SHA256 checksum is included in the artifact for integrity verification
@@ -567,7 +595,7 @@ Target Metrics:
 ├── APK Size: 25-40 MB
 └── Artifact Upload Time: < 1 minute
 
-Current App Metrics (v1.1.0+4):
+Current App Metrics (v1.1.0+5):
 ├── Dependencies: 7 packages
 ├── Min SDK: Android SDK set by Flutter
 ├── Target SDK: 35
@@ -581,16 +609,20 @@ Available Outputs (for downstream jobs):
 
 outputs:
   app_version: ${{ steps.get_version.outputs.version }}
-    # Example: "1.1.0+4"
+    # Example: "1.1.0+5"
   
   build_number: ${{ steps.get_version.outputs.build_number }}
-    # Example: "4"
+    # Example: "5"
   
   apk_name: ${{ steps.get_version.outputs.apk_name }}
-    # Example: "neo_weather-1.1.0+4.apk"
+    # Example: "neo_weather-1.1.0+5.apk"
   
   appetize_url: ${{ steps.upload_appetize.outputs.publicURL }}
     # Example: "https://appetize.io/app/xyz123..."
+  
+  artifact_id: ${{ steps.get_artifact.outputs.artifact_id }}
+    # Example: "123456789"
+    # Used for direct download links
 
 Usage in downstream jobs:
   needs: build-and-upload

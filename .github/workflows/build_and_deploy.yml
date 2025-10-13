@@ -179,7 +179,26 @@ jobs:
           publicKey: ${{ secrets.APPETIZE_PUBLIC_KEY }}
         continue-on-error: true
 
-      # 16. Create deployment summary
+      # 16. Get artifact ID for direct download link
+      - name: Get artifact ID
+        id: get_artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+            const artifact = artifacts.data.artifacts.find(a => a.name === 'neo_weather-${{ steps.get_version.outputs.version }}');
+            if (artifact) {
+              core.setOutput('artifact_id', artifact.id);
+              console.log(`Found artifact ID: ${artifact.id}`);
+            } else {
+              console.error('Artifact not found!');
+            }
+
+      # 17. Create deployment summary
       - name: Create deployment summary
         if: always()
         run: |
@@ -198,19 +217,24 @@ jobs:
           echo "- **APK Build:** ✅ Success" >> $GITHUB_STEP_SUMMARY
           echo "- **Appetize Upload:** ${{ steps.upload_appetize.outcome == 'success' && '✅ Success' || '⚠️ Failed or Skipped' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📥 Download Links" >> $GITHUB_STEP_SUMMARY
-          echo "- **GitHub Artifact:** [View & Download APK](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.upload_appetize.outcome }}" == "success" ] && [ -n "${{ steps.upload_appetize.outputs.publicURL }}" ]; then
-            echo "- **Appetize.io:** [Test App Online](${{ steps.upload_appetize.outputs.publicURL }})" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "## 📥 Download & Test" >> $GITHUB_STEP_SUMMARY
+          echo "**Download APK:** [neo_weather-${{ steps.get_version.outputs.version }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.get_artifact.outputs.artifact_id }})" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> 💡 **Tip:** Click the link above to download the APK directly." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.upload_appetize.outcome }}" == "success" ] && [ -n "${{ steps.upload_appetize.outputs.publicURL }}" ]; then
+            echo "**Test on Appetize.io:** ${{ steps.upload_appetize.outputs.publicURL }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Click the link above to test your app in the browser!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "## 🔐 Security" >> $GITHUB_STEP_SUMMARY
-          echo "- SHA256 checksum included in artifact" >> $GITHUB_STEP_SUMMARY
+          echo "- SHA256 checksum included in artifact for integrity verification" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Workflow run: [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> $GITHUB_STEP_SUMMARY
 
-      # 17. Comment on PR with deployment details
+      # 18. Comment on PR with deployment details
       - name: Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -220,15 +244,16 @@ jobs:
             const fs = require('fs');
             const appetizeStatus = '${{ steps.upload_appetize.outcome }}' === 'success' ? '✅ Success' : '⚠️ Failed or Skipped';
             const appetizeUrl = '${{ steps.upload_appetize.outputs.publicURL }}';
+            const artifactId = '${{ steps.get_artifact.outputs.artifact_id }}';
             
-            let appetizeLink = '';
+            let appetizeSection = '';
             if ('${{ steps.upload_appetize.outcome }}' === 'success' && appetizeUrl && appetizeUrl !== '') {
-              appetizeLink = `\n- **🎮 Test on Appetize.io:** [Launch App](${appetizeUrl})`;
+              appetizeSection = `\n**🎮 Test on Appetize.io:** ${appetizeUrl}\n\nClick the link above to test your app in the browser!\n`;
             }
             
-            const comment = `# 🚀 Build & Deployment Report
+            const comment = `## 🚀 Build & Deployment Report
             
-            ## 📱 Application Details
+            ### 📱 Application Details
             | Property | Value |
             |----------|-------|
             | **App Name** | Neo Weather |
@@ -238,20 +263,22 @@ jobs:
             | **Build Date** | ${new Date().toUTCString()} |
             | **Commit** | \`${{ github.sha }}\` |
             
-            ## 📊 Build Status
+            ### 📊 Build Status
             - **Code Analysis:** ✅ Passed
             - **APK Build:** ✅ Success
             - **Appetize Upload:** ${appetizeStatus}
             - **Artifact Upload:** ✅ Success
             
-            ## 📥 Download & Test
-            - **📦 Download APK:** [View Artifacts & Download](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})${appetizeLink}
+            ### 📥 Download & Test
+            **📦 Download APK:** [neo_weather-${{ steps.get_version.outputs.version }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifactId})
             
-            ## 🔐 Security
+            > 💡 **Tip:** Click the link above to download the APK directly.
+            ${appetizeSection}
+            ### 🔐 Security
             - SHA256 checksum is included in the artifact for integrity verification
             
             ---
-            *This build was automatically generated by GitHub Actions*
+            *This build was automatically generated by GitHub Actions*  
             *Workflow: [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
             
             github.rest.issues.createComment({
