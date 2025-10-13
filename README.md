@@ -212,7 +212,7 @@ Every pull request to the `master` branch automatically:
 ### Build Features
 
 - **Smart Caching**: Dependencies are cached for faster subsequent builds (~2.5x speedup)
-- **Version Tracking**: APKs are automatically named with version from `pubspec.yaml` (e.g., `neo_weather-1.1.0+6.apk`)
+- **Version Tracking**: APKs are automatically named with version from `pubspec.yaml` (e.g., `neo_weather-1.1.1+7.apk`)
 - **Direct Downloads**: Get direct download links for built APKs in PR comments
 - **Live Preview Links**: Appetize.io URLs provided in PR comments and workflow summaries
 - **Security**: SHA256 checksums included for verifying APK integrity
