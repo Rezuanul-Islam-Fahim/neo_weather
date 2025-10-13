@@ -59,7 +59,7 @@
 │                    │ ID via API   │  │ Artifact ID  │          │
 │                    └──────────────┘  └──────────────┘          │
 │                                                                  │
-│  APK Name: neo_weather-{VERSION}.apk (e.g., 1.1.0+6)           │
+│  APK Name: neo_weather-{VERSION}.apk (e.g., 1.1.1+7)           │
 │  Includes: APK + SHA256 checksum                                │
 │  Retention: 30 days                                             │
 │  Artifact ID: Used for direct download links                    │
@@ -225,7 +225,7 @@ API Response Example:
          ┌───────────────────────────┐
          │ Extract Version from      │
          │ pubspec.yaml              │
-         │ (e.g., 1.1.0+6)           │
+         │ (e.g., 1.1.1+7)           │
          └──────────┬────────────────┘
                     │
                     ▼
@@ -398,7 +398,7 @@ Developer                GitHub Actions              Appetize.io
 ┌─────────────────────────────────────────────────────────────┐
 │                  pubspec.yaml                                │
 │                                                              │
-│  version: 1.1.0+6                                           │
+│  version: 1.1.1+7                                           │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -407,12 +407,12 @@ Developer                GitHub Actions              Appetize.io
          │ awk '{print $2}'      │
          └──────────┬────────────┘
                     │
-                    ▼ "1.1.0+6"
+                    ▼ "1.1.1+7"
          ┌───────────────────────┐
          │ Parse Version String  │
          ├───────────────────────┤
-         │ VERSION="1.1.0+6"     │
-         │ APP_VERSION="1.1.0"   │ ← cut -d'+' -f1
+         │ VERSION="1.1.1+7"     │
+         │ APP_VERSION="1.1.1"   │ ← cut -d'+' -f1
          │ BUILD_NUMBER="4"      │ ← cut -d'+' -f2
          └──────────┬────────────┘
                     │
@@ -420,7 +420,7 @@ Developer                GitHub Actions              Appetize.io
          ┌───────────────────────┐
          │ Generate APK Name     │
          ├───────────────────────┤
-         │ neo_weather-1.1.0+6   │
+         │ neo_weather-1.1.1+7   │
          │ .apk                  │
          └──────────┬────────────┘
                     │
@@ -428,11 +428,11 @@ Developer                GitHub Actions              Appetize.io
          ┌───────────────────────┐
          │ Export as Outputs     │
          ├───────────────────────┤
-         │ version=1.1.0+6       │
-         │ app_version=1.1.0     │
+         │ version=1.1.1+7       │
+         │ app_version=1.1.1     │
          │ build_number=4        │
          │ apk_name=neo_weather- │
-         │          1.1.0+6.apk  │
+         │          1.1.1+7.apk  │
          └───────────────────────┘
 ```
 
@@ -474,10 +474,10 @@ Developer                GitHub Actions              Appetize.io
 
 Verification Example:
 # Verify downloaded APK
-sha256sum -c neo_weather-1.1.0+6.apk.sha256
+sha256sum -c neo_weather-1.1.1+7.apk.sha256
 
 Expected output:
-neo_weather-1.1.0+6.apk: OK
+neo_weather-1.1.1+7.apk: OK
 ```
 
 ## 🎨 Workflow Outputs
@@ -491,9 +491,9 @@ neo_weather-1.1.0+6.apk: OK
 
 ## 📱 Application Information
 - App Name: Neo Weather
-- Version: 1.1.0
+- Version: 1.1.1
 - Build Number: 4
-- APK Name: neo_weather-1.1.0+6.apk
+- APK Name: neo_weather-1.1.1+7.apk
 - Build Date: 2025-10-14 12:34:56 UTC
 - Commit SHA: abc1234567
 
@@ -503,7 +503,7 @@ neo_weather-1.1.0+6.apk: OK
 - Appetize Upload: ✅ Success (or ⚠️ Failed or Skipped)
 
 ## 📥 Download & Test
-- **GitHub Artifact:** [neo_weather-1.1.0+6.apk](Direct Download Link)
+- **GitHub Artifact:** [neo_weather-1.1.1+7.apk](Direct Download Link)
   > 💡 **Tip:** Click the link above to download the APK directly.
 - **Appetize.io:** [Test App Online](https://appetize.io/app/...) (if successful)
   > Click the link above to test your app in the browser!
@@ -523,9 +523,9 @@ neo_weather-1.1.0+6.apk: OK
 | Property | Value |
 |----------|-------|
 | App Name | Neo Weather |
-| Version | 1.1.0 |
+| Version | 1.1.1 |
 | Build Number | 4 |
-| APK Name | neo_weather-1.1.0+6.apk |
+| APK Name | neo_weather-1.1.1+7.apk |
 | Build Date | Mon, 14 Oct 2025 12:34:56 GMT |
 | Commit | abc1234567 |
 
@@ -536,7 +536,7 @@ neo_weather-1.1.0+6.apk: OK
 - Artifact Upload: ✅ Success
 
 ## 📥 Download & Test
-- **📦 Download APK:** [neo_weather-1.1.0+6](Direct link to artifact)
+- **📦 Download APK:** [neo_weather-1.1.1+7](Direct link to artifact)
   
   > 💡 **Tip:** Click the link above to download the APK directly.
 
@@ -599,7 +599,7 @@ Issue 7: Version Extraction Fails
 ├── Symptom: Invalid version number or APK name
 ├── Cause: pubspec.yaml version format incorrect
 └── Solution: Ensure version follows format: X.Y.Z+B
-    Example: 1.1.0+6
+    Example: 1.1.1+7
 ```
 
 ## 📈 Performance Metrics
@@ -613,7 +613,7 @@ Target Metrics:
 ├── APK Size: 25-40 MB
 └── Artifact Upload Time: < 1 minute
 
-Current App Metrics (v1.1.0+6):
+Current App Metrics (v1.1.1+7):
 ├── Dependencies: 7 packages
 ├── Min SDK: Android SDK set by Flutter
 ├── Target SDK: 35
@@ -627,13 +627,13 @@ Available Outputs (for downstream jobs):
 
 outputs:
   app_version: ${{ steps.get_version.outputs.version }}
-    # Example: "1.1.0+6"
+    # Example: "1.1.1+7"
   
   build_number: ${{ steps.get_version.outputs.build_number }}
     # Example: "5"
   
   apk_name: ${{ steps.get_version.outputs.apk_name }}
-    # Example: "neo_weather-1.1.0+6.apk"
+    # Example: "neo_weather-1.1.1+7.apk"
   
   appetize_url: ${{ steps.upload_appetize.outputs.publicURL }}
     # Example: "https://appetize.io/app/xyz123..."
@@ -659,7 +659,7 @@ Usage in downstream jobs:
 
 **Architecture Version:** 1.0  
 **Last Updated:** October 14, 2025  
-**Current App Version:** 1.1.0+6  
+**Current App Version:** 1.1.1+7  
 **Flutter Version:** 3.35.6  
 **Dart Version:** 3.5.0+  
 **Java Version:** 17 (Temurin Distribution)  
