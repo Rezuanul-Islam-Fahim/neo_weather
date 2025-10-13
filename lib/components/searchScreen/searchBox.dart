@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../screens/homeScreen.dart';
 
@@ -24,9 +25,18 @@ class _SearchBoxState extends State<SearchBox> {
         isWrong = false;
       });
 
+      final apiKey = dotenv.env['OPENWEATHER_API_KEY'];
+      if (apiKey == null) {
+        setState(() {
+          isWrong = true;
+          isLoading = false;
+        });
+        return;
+      }
+
       http.Response response = await http.get(
         Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=6a060d4795b813d5a6ba640210d4cbe3&units=metric',
+          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric',
         ),
       );
       Map<String, dynamic> fetchedData = json.decode(response.body);

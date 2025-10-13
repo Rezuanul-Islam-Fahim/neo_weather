@@ -23,7 +23,7 @@ class SearchPage extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: <Color>[
-                  Colors.black45.withOpacity(0.6),
+                  Colors.black45.withValues(alpha: 0.6),
                   Colors.black26,
                   Colors.black12,
                 ],
@@ -36,7 +36,8 @@ class SearchPage extends StatelessWidget {
             children: <Widget>[
               SvgPicture.asset(
                 'assets/icons/cloudy.svg',
-                color: Colors.white,
+                colorFilter:
+                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 width: 130,
               ),
               const Text(

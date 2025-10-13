@@ -4,12 +4,13 @@ import 'progressBar.dart';
 
 class WeatherData extends StatelessWidget {
   const WeatherData({
-    @required this.title,
-    @required this.value,
-    @required this.sign,
-    @required this.barColor,
-    @required this.barWidthFactor,
-  });
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.sign,
+    required this.barColor,
+    required this.barWidthFactor,
+  }) : super(key: key);
 
   final String title;
   final dynamic value;
