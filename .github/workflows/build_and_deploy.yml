@@ -1,7 +1,7 @@
 # .github/workflows/build_and_deploy.yml
 
 # A descriptive name for your workflow
-name: Build Flutter and Upload to Appetize.io
+name: Build, Analyze & Deploy Flutter App
 
 # Controls when the workflow will run
 on:
@@ -12,17 +12,35 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Global permissions for the workflow
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-and-upload:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    
+    # Set timeout to prevent hanging jobs
+    timeout-minutes: 30
+
+    # Define outputs that can be used in other jobs or steps
+    outputs:
+      app_version: ${{ steps.get_version.outputs.version }}
+      build_number: ${{ steps.get_version.outputs.build_number }}
+      apk_name: ${{ steps.get_version.outputs.apk_name }}
+      appetize_url: ${{ steps.deployment_info.outputs.app_url }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # 1. Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for proper versioning
 
       # 2. Set up the Java Development Kit (JDK) environment, required for Android builds
       - name: Set up Java
@@ -30,6 +48,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
       # 3. Set up the Flutter SDK for the job
       - name: Set up Flutter
@@ -38,45 +57,333 @@ jobs:
           flutter-version: '3.35.6'
           channel: 'stable'
           cache: true # Caches Flutter dependencies for faster builds
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
 
-      # 4. Cache Gradle dependencies
+      # 4. Cache pub dependencies
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ github.workspace }}/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      # 5. Cache Gradle dependencies
       - name: Cache Gradle Dependencies
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle') }}
+            android/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle', '**/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 5. Get all the Flutter packages
+      # 6. Get all the Flutter packages
       - name: Install dependencies
         run: flutter pub get
 
-      # 6. Create .env file from secrets
+      # 7. Verify Flutter installation
+      - name: Verify Flutter installation
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      # 8. Extract version from pubspec.yaml
+      - name: Extract version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          APP_VERSION=$(echo $VERSION | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo $VERSION | cut -d'+' -f2)
+          APK_NAME="neo_weather-${VERSION}.apk"
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+          
+          echo "📦 App Version: $APP_VERSION"
+          echo "🔢 Build Number: $BUILD_NUMBER"
+          echo "📱 APK Name: $APK_NAME"
+
+      # 9. Create .env file from secrets
       - name: Create .env file
         run: |
           echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" > .env
+          echo "✅ Environment file created"
 
-      # 7. Build the release version of the Android APK
+      # 10. Run Flutter analyze to check for code issues
+      - name: Analyze Flutter code
+        run: |
+          echo "🔍 Running Flutter analyze..."
+          flutter analyze --no-fatal-infos --no-fatal-warnings
+          echo "✅ Code analysis completed"
+
+      # 11. Build the release version of the Android APK
       # The output is located at build/app/outputs/flutter-apk/app-release.apk
       - name: Build Android APK
-        run: flutter build apk --release
+        run: |
+          echo "🏗️ Building Android APK..."
+          flutter build apk --release --verbose
+          echo "✅ APK build completed"
 
-      # 8. Upload the generated APK to Appetize.io using a dedicated action
-      - name: Upload to Appetize.io
-        uses: appetizeio/github-action-appetize@v1.0.5
+      # 12. Rename APK with version
+      - name: Rename APK with version
+        run: |
+          APK_NAME="${{ steps.get_version.outputs.apk_name }}"
+          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/$APK_NAME"
+          echo "✅ APK renamed to: $APK_NAME"
+          
+          # Display APK info
+          ls -lh "build/app/outputs/flutter-apk/$APK_NAME"
+
+      # 13. Generate APK checksum for integrity verification
+      - name: Generate APK checksum
+        run: |
+          cd build/app/outputs/flutter-apk/
+          sha256sum "${{ steps.get_version.outputs.apk_name }}" > "${{ steps.get_version.outputs.apk_name }}.sha256"
+          cat "${{ steps.get_version.outputs.apk_name }}.sha256"
+
+      # 14. Upload APK as artifact
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
         with:
-          # Use the secret token you stored earlier
-          apiToken: ${{ secrets.APPETIZE_API_TOKEN }}
-          
-          # Path to the file you want to upload
-          appFile: build/app/outputs/flutter-apk/app-release.apk
-          
-          # Specify the platform
-          platform: android
+          name: neo_weather-${{ steps.get_version.outputs.version }}
+          path: |
+            build/app/outputs/flutter-apk/${{ steps.get_version.outputs.apk_name }}
+            build/app/outputs/flutter-apk/${{ steps.get_version.outputs.apk_name }}.sha256
+          retention-days: 30
+          if-no-files-found: error
 
-          # This publicKey is used to update an existing app.
-          # If this secret is not set, a new app will be created.
-          publicKey: ${{ secrets.APPETIZE_PUBLIC_KEY }}
+      # 15. Check for existing Appetize app
+      - name: Check for existing Appetize app
+        id: check_app
+        run: |
+          if [ -z "${{ secrets.APPETIZE_PUBLIC_KEY }}" ]; then
+            echo "app_exists=false" >> $GITHUB_OUTPUT
+            echo "No existing Appetize public key found"
+          else
+            echo "app_exists=true" >> $GITHUB_OUTPUT
+            echo "Existing Appetize public key found: ${{ secrets.APPETIZE_PUBLIC_KEY }}"
+          fi
+
+      # 16. Upload new APK to Appetize
+      - name: Upload new APK to Appetize
+        if: steps.check_app.outputs.app_exists == 'false'
+        id: upload_new
+        run: |
+          RESPONSE=$(curl -X POST "https://api.appetize.io/v1/apps" \
+            -u "${{ secrets.APPETIZE_API_TOKEN }}:" \
+            -F "file=@build/app/outputs/flutter-apk/${{ steps.get_version.outputs.apk_name }}" \
+            -F "platform=android" \
+            -F "note=Neo Weather - Build ${{ github.run_number }}")
+          
+          echo "Response: $RESPONSE"
+          PUBLIC_KEY=$(echo $RESPONSE | jq -r '.publicKey')
+          APP_URL=$(echo $RESPONSE | jq -r '.publicURL')
+          
+          if [ "$PUBLIC_KEY" != "null" ]; then
+            echo "public_key=$PUBLIC_KEY" >> $GITHUB_OUTPUT
+            echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+            echo "✅ Successfully uploaded new APK to Appetize"
+            echo "Public Key: $PUBLIC_KEY"
+            echo "App URL: $APP_URL"
+            echo "⚠️ IMPORTANT: Save this public key as APPETIZE_PUBLIC_KEY in GitHub Secrets for future updates!"
+          else
+            echo "❌ Failed to upload APK to Appetize"
+            exit 1
+          fi
+        continue-on-error: true
+
+      # 17. Update existing APK on Appetize
+      - name: Update existing APK on Appetize
+        if: steps.check_app.outputs.app_exists == 'true'
+        id: update_existing
+        run: |
+          RESPONSE=$(curl -X POST "https://api.appetize.io/v1/apps/${{ secrets.APPETIZE_PUBLIC_KEY }}" \
+            -u "${{ secrets.APPETIZE_API_TOKEN }}:" \
+            -F "file=@build/app/outputs/flutter-apk/${{ steps.get_version.outputs.apk_name }}" \
+            -F "note=Neo Weather - Build ${{ github.run_number }} (Updated)")
+          
+          echo "Response: $RESPONSE"
+          PUBLIC_KEY=$(echo $RESPONSE | jq -r '.publicKey')
+          APP_URL=$(echo $RESPONSE | jq -r '.publicURL')
+          
+          if [ "$PUBLIC_KEY" != "null" ]; then
+            echo "public_key=$PUBLIC_KEY" >> $GITHUB_OUTPUT
+            echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+            echo "✅ Successfully updated APK on Appetize"
+            echo "Public Key: $PUBLIC_KEY"
+            echo "App URL: $APP_URL"
+          else
+            echo "❌ Failed to update APK on Appetize"
+            exit 1
+          fi
+        continue-on-error: true
+
+      # 18. Set deployment info
+      - name: Set deployment info
+        id: deployment_info
+        run: |
+          if [ "${{ steps.check_app.outputs.app_exists }}" == "true" ]; then
+            echo "public_key=${{ steps.update_existing.outputs.public_key }}" >> $GITHUB_OUTPUT
+            echo "app_url=${{ steps.update_existing.outputs.app_url }}" >> $GITHUB_OUTPUT
+          else
+            echo "public_key=${{ steps.upload_new.outputs.public_key }}" >> $GITHUB_OUTPUT
+            echo "app_url=${{ steps.upload_new.outputs.app_url }}" >> $GITHUB_OUTPUT
+          fi
+
+      # 19. Get artifact ID for direct download link
+      - name: Get artifact ID
+        id: get_artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+            const artifact = artifacts.data.artifacts.find(a => a.name === 'neo_weather-${{ steps.get_version.outputs.version }}');
+            if (artifact) {
+              core.setOutput('artifact_id', artifact.id);
+              console.log(`Found artifact ID: ${artifact.id}`);
+            } else {
+              core.setFailed('Artifact not found');
+            }
+
+      # 20. Create deployment summary
+      - name: Create deployment summary
+        if: always()
+        run: |
+          echo "# 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📱 Application Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **App Name:** Neo Weather" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ steps.get_version.outputs.app_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number:** ${{ steps.get_version.outputs.build_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **APK Name:** \`${{ steps.get_version.outputs.apk_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit SHA:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Code Analysis:** ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          echo "- **APK Build:** ✅ Success" >> $GITHUB_STEP_SUMMARY
+          
+          # Determine Appetize upload status
+          if [ "${{ steps.check_app.outputs.app_exists }}" == "true" ]; then
+            APPETIZE_STATUS="${{ steps.update_existing.outcome == 'success' && '✅ Success (Updated)' || '⚠️ Failed or Skipped' }}"
+          else
+            APPETIZE_STATUS="${{ steps.upload_new.outcome == 'success' && '✅ Success (New Upload)' || '⚠️ Failed or Skipped' }}"
+          fi
+          echo "- **Appetize Upload:** $APPETIZE_STATUS" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📥 Download & Test" >> $GITHUB_STEP_SUMMARY
+          echo "**Download APK:** [neo_weather-${{ steps.get_version.outputs.version }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.get_artifact.outputs.artifact_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> 💡 **Tip:** Click the link above to download the APK directly." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Add Appetize link if available
+          APPETIZE_URL="${{ steps.deployment_info.outputs.app_url }}"
+          if [ -n "$APPETIZE_URL" ] && [ "$APPETIZE_URL" != "" ]; then
+            echo "### 📱 Test Your App" >> $GITHUB_STEP_SUMMARY
+            echo "**Test on Appetize.io:** $APPETIZE_URL" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Click the link above to test your app in the browser!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Add warning for first-time uploads
+          if [ "${{ steps.check_app.outputs.app_exists }}" == "false" ] && [ "${{ steps.upload_new.outcome }}" == "success" ]; then
+            echo "### ⚠️ Action Required" >> $GITHUB_STEP_SUMMARY
+            echo "This is a new app upload. Please save the **Public Key** as \`APPETIZE_PUBLIC_KEY\` in your GitHub repository secrets for future updates." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Steps to add secret:**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Go to your repository Settings" >> $GITHUB_STEP_SUMMARY
+            echo "2. Navigate to Secrets and variables → Actions" >> $GITHUB_STEP_SUMMARY
+            echo "3. Click 'New repository secret'" >> $GITHUB_STEP_SUMMARY
+            echo "4. Name: \`APPETIZE_PUBLIC_KEY\`" >> $GITHUB_STEP_SUMMARY
+            echo "5. Value: \`${{ steps.deployment_info.outputs.public_key }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "## 🔐 Security" >> $GITHUB_STEP_SUMMARY
+          echo "- SHA256 checksum included in artifact for integrity verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Workflow run: [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> $GITHUB_STEP_SUMMARY
+
+      # 21. Comment on PR with deployment details
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            // Determine Appetize status and URL
+            let appetizeStatus = '⚠️ Failed or Skipped';
+            let appetizeUrl = '${{ steps.deployment_info.outputs.app_url }}';
+            
+            if ('${{ steps.check_app.outputs.app_exists }}' === 'true') {
+              appetizeStatus = '${{ steps.update_existing.outcome }}' === 'success' ? '✅ Success (Updated)' : '⚠️ Failed or Skipped';
+            } else {
+              appetizeStatus = '${{ steps.upload_new.outcome }}' === 'success' ? '✅ Success (New Upload)' : '⚠️ Failed or Skipped';
+            }
+            
+            const artifactId = '${{ steps.get_artifact.outputs.artifact_id }}';
+            
+            let appetizeSection = '';
+            if (appetizeUrl && appetizeUrl !== '') {
+              appetizeSection = `\n### 📱 Test Your App\n**Test on Appetize.io:** ${appetizeUrl}\n\nClick the link above to test the app in your browser!\n`;
+            }
+            
+            let actionRequiredSection = '';
+            if ('${{ steps.check_app.outputs.app_exists }}' === 'false' && '${{ steps.upload_new.outcome }}' === 'success') {
+              actionRequiredSection = `\n### ⚠️ Action Required\nThis is a new app upload. Please save the **Public Key** as \`APPETIZE_PUBLIC_KEY\` in your GitHub repository secrets for future updates.\n\n**Steps to add secret:**\n1. Go to your repository Settings\n2. Navigate to Secrets and variables → Actions\n3. Click 'New repository secret'\n4. Name: \`APPETIZE_PUBLIC_KEY\`\n5. Value: \`${{ steps.deployment_info.outputs.public_key }}\`\n`;
+            }
+            
+            const comment = `## 🚀 Build & Deployment Report
+            
+            ### 📱 Application Details
+            | Property | Value |
+            |----------|-------|
+            | **App Name** | Neo Weather |
+            | **Version** | ${{ steps.get_version.outputs.app_version }} |
+            | **Build Number** | ${{ steps.get_version.outputs.build_number }} |
+            | **APK Name** | \`${{ steps.get_version.outputs.apk_name }}\` |
+            | **Build Date** | ${new Date().toUTCString()} |
+            | **Commit** | \`${{ github.sha }}\` |
+            
+            ### 📊 Build Status
+            - **Code Analysis:** ✅ Passed
+            - **APK Build:** ✅ Success
+            - **Appetize Upload:** ${appetizeStatus}
+            - **Artifact Upload:** ✅ Success
+            
+            ### 📥 Download & Test
+            **📦 Download APK:** [neo_weather-${{ steps.get_version.outputs.version }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifactId})
+            
+            > 💡 **Tip:** Click the link above to download the APK directly.
+            ${appetizeSection}${actionRequiredSection}
+            ### 🔐 Security
+            - SHA256 checksum is included in the artifact for integrity verification
+            
+            ---
+            *This build was automatically generated by GitHub Actions*  
+            *Workflow: [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

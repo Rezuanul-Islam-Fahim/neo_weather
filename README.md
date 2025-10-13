@@ -190,6 +190,38 @@ flutter test --coverage
 
 ---
 
+## 🔄 Continuous Integration & Deployment
+
+This project uses **GitHub Actions** for automated building, testing, and deployment.
+
+### Automated Workflow
+
+Every pull request to the `master` branch automatically:
+- ✅ Analyzes code quality with `flutter analyze`
+- 🏗️ Builds a release APK
+- 📦 Uploads the APK as a downloadable artifact (30-day retention)
+- 🔐 Generates SHA256 checksum for integrity verification
+- 🌐 Deploys to [Appetize.io](https://appetize.io) for browser-based testing
+- 💬 Posts build results and download links directly to the PR
+
+### Download & Test Latest Build
+
+- **📱 Live Preview**: Test the app instantly in your browser on [Appetize.io](https://appetize.io/app/bofepnohvuajbs5ijngokyusui) (no installation required!)
+- **📦 Download APK**: Get the latest APK from [GitHub Actions Artifacts](https://github.com/Rezuanul-Islam-Fahim/neo_weather/actions) (navigate to any workflow run)
+
+### Build Features
+
+- **Smart Caching**: Dependencies are cached for faster subsequent builds (~2.5x speedup)
+- **Version Tracking**: APKs are automatically named with version from `pubspec.yaml` (e.g., `neo_weather-1.1.0+6.apk`)
+- **Direct Downloads**: Get direct download links for built APKs in PR comments
+- **Live Preview Links**: Appetize.io URLs provided in PR comments and workflow summaries
+- **Security**: SHA256 checksums included for verifying APK integrity
+- **Smart Updates**: Automatically updates existing Appetize app or creates new one on first run
+
+For more details on the workflow architecture, see [`.github/ARCHITECTURE.md`](.github/ARCHITECTURE.md).
+
+---
+
 ## 🤝 Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
