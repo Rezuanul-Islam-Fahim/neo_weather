@@ -13,7 +13,7 @@ A beautiful and modern weather application built with **Flutter** and **Dart** f
 [![Flutter](https://img.shields.io/badge/Flutter-3.5+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 
-[Download APK](https://drive.google.com/file/d/1Xe3KQzI3Ylv0i8JnxtdvumtEiJZ_rtCy/view?usp=sharing) • [Report Bug](https://github.com/Rezuanul-Islam-Fahim/neo_weather/issues) • [Request Feature](https://github.com/Rezuanul-Islam-Fahim/neo_weather/issues)
+[Live Preview](https://appetize.io/app/bofepnohvuajbs5ijngokyusui) • [Report Bug](https://github.com/Rezuanul-Islam-Fahim/neo_weather/issues) • [Request Feature](https://github.com/Rezuanul-Islam-Fahim/neo_weather/issues)
 
 </div>
 
